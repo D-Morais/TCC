@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def pega_dados(url):
-    dados = pd.read_excel(url, index_col=0)
+    dados = pd.read_excel(url)
     return dados
 
 
