@@ -6,12 +6,12 @@ from PIL import Image
 import informacoes as info
 
 logo_cbf = Image.open("logo-topo.png")
-DADOS = api.pega_dados(r"C:\Users\morai\PycharmProjects\TCC\dataset\tabela_brasileiro.xlsx")
-ESTATISTICAS = api.pega_dados(r"C:\Users\morai\PycharmProjects\TCC\dataset\estatisticas.xlsx")
-RESULTADOS = api.pega_dados(r"C:\Users\morai\PycharmProjects\TCC\dataset\resultados_br.xlsx")
-MAIORES_JOGOS = api.pega_dados(r"C:\Users\morai\PycharmProjects\TCC\dataset\maiores_jogos.xlsx")
-GOLS = api.pega_dados(r"C:\Users\morai\PycharmProjects\TCC\dataset\gols.xlsx")
-EQUIPES = api.pega_dados(r"C:\Users\morai\PycharmProjects\TCC\dataset\dados_equipes.xlsx")
+DADOS = api.pega_dados(r"https://github.com/D-Morais/TCC/blob/main/dataset/tabela_brasileiro.xlsx")
+ESTATISTICAS = api.pega_dados(r"https://github.com/D-Morais/TCC/blob/main/dataset/estatisticas.xlsx")
+RESULTADOS = api.pega_dados(r"https://github.com/D-Morais/TCC/blob/main/dataset/resultados_br.xlsx")
+MAIORES_JOGOS = api.pega_dados(r"https://github.com/D-Morais/TCC/blob/main/dataset/maiores_jogos.xlsx")
+GOLS = api.pega_dados(r"https://github.com/D-Morais/TCC/blob/main/dataset/gols.xlsx")
+EQUIPES = api.pega_dados(r"https://github.com/D-Morais/TCC/blob/main/dataset/dados_equipes.xlsx")
 
 TEMPORADA_2023 = api.divide_temporada(DADOS, 2023)
 TEMPORADA_2022 = api.divide_temporada(DADOS, 2022)
