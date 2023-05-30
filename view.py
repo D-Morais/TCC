@@ -1,15 +1,11 @@
 import streamlit as st
-from sklearn import preprocessing
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_selection import SelectKBest
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score , f1_score, precision_score, recall_score
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.preprocessing import scale
 import numpy as np
 import pickle
 import api
 import graficos
+from PIL import Image
+
+logo_cbf = Image.open("logo-topo.png")
 
 
 def mostra_probabilidades(dados, time_a, time_b):
@@ -165,3 +161,24 @@ def mostra_estatisticas_diversas(dados, ano):
     col2.metric(label="Quantidade de impedimentos", value=f"{impedimentos}")
     col2.metric(label="Média de impedimentos por jogo", value="{: .2f}".format(impedimentos / 380))
     col1.metric(label="Quantidade de jogadores utilizados", value=f"{jogadores_utilizados}")
+
+
+def mostrar_ranking(ano):
+    existe = True
+    coluna1, coluna2 = st.columns([1, 4])
+    coluna1.image(logo_cbf, width=100)
+    coluna2.markdown(f"<h1 style='text-align: left;'>Ranking da CBF {ano}</h1>", unsafe_allow_html=True)
+    lista_equipes = api.pega_dados_ranking(ano)
+    if not lista_equipes:
+        st.warning("Nenhuma temporada cadastrada!")
+        existe = False
+    if existe:
+        colms = st.columns((0.5, 0.5, 1, 2))
+        campos = ['', 'Posição', 'Equipe', 'Pontos']
+        for col, campo_nome in zip(colms, campos):
+            col.write(campo_nome)
+        for equipe in lista_equipes:
+            _, col1, col2, col3 = st.columns((0.5, 0.5, 1, 2))
+            col1.write(equipe[2])
+            col2.write(equipe[1])
+            col3.write(equipe[3])

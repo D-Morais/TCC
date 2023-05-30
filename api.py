@@ -1,4 +1,5 @@
 import pandas as pd
+import banco_de_dados as banco
 
 
 def pega_dados(url):
@@ -109,6 +110,14 @@ def pega_ranking(dados):
     ranking = tabela[['Time', 'Ranking', 'Pontos']]
     ranking = ranking.sort_values("Ranking", ascending=True)
     return ranking
+
+
+def pega_dados_ranking(ano):
+    conexao = banco.conectar()
+    sql = """SELECT * FROM tb_ranking WHERE temporada = ?"""
+    lista_equipes = banco.selecionar_dados_condicional(conexao, sql, ano)
+    banco.desconectar(conexao)
+    return lista_equipes
 
 
 def pega_dados_casa(dados):
