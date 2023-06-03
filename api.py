@@ -1,16 +1,3 @@
-import pandas as pd
-import banco_de_dados as banco
-
-
-def pega_dados(url):
-    dados = pd.read_excel(url)
-    return dados
-
-
-def divide_temporada(dados, temporada):
-    return dados[dados.Temporada == temporada]
-
-
 def dados_equipe(equipe):
     if equipe == "América - MG":
         return 19, 179060000, 30.1, 38, 113, 4, 29, 18, 156, 49
@@ -72,72 +59,11 @@ def pega_estatisticas(dados, time_a):
     return posse_media_total, posse_media_casa
 
 
-def divide_casa_fora(dados):
+def pega_dado_temporada(dados, ano):
     tabela = dados
-    jogos_casa = pega_dados_casa(tabela)
-    jogos_fora = pega_dados_visitante(tabela)
-    tabela = deleta_colunas(tabela)
-    tabela = redefine_nome_classificacao(tabela)
-    jogos_casa = redefine_nome_coluna_casa(jogos_casa)
-    jogos_fora = redefine_nome_coluna_visitante(jogos_fora)
-    return tabela, jogos_casa, jogos_fora
-
-
-def redefine_nome_classificacao(dados):
-    dados = dados.rename(columns={'PTS': 'Pontos', 'J': 'Jogos', 'V': 'Vitórias', 'E': 'Empate', 'D': 'Derrota',
-                                  '%': 'Aproveitamento'}, inplace=False)
-    return dados
-
-
-def redefine_nome_coluna_casa(dados):
-    dados = dados.rename(columns={'Jogos_casa': 'Jogos', 'V_casa': 'Vitórias', 'E_casa': 'Empates',
-                                  'D_casa': 'Derrotas', 'gols_pro_casa': 'GP',
-                                  'gols_contra_casa': 'GC', 'saldo_gols_casa': 'SG',
-                                  'pontos_casa': 'Pontos', 'media_pontos_casa': 'Media de Pontos'}, inplace=False)
-    return dados
-
-
-def redefine_nome_coluna_visitante(dados):
-    dados = dados.rename(columns={'Jogos_fora': 'Jogos', 'V_fora': 'Vitórias', 'E_fora': 'Empates',
-                                  'D_fora': 'Derrotas', 'gols_pro_fora': 'GP',
-                                  'gols_contra_fora': 'GC', 'saldo_gols_fora': 'SG',
-                                  'pontos_fora': 'Pontos', 'media_pontos_fora': 'Media de Pontos'}, inplace=False)
-    return dados
-
-
-def pega_ranking(dados):
-    tabela = dados
-    ranking = tabela[['Time', 'Ranking', 'Pontos']]
-    ranking = ranking.sort_values("Ranking", ascending=True)
-    return ranking
-
-
-def pega_dados_ranking(ano):
-    conexao = banco.conectar()
-    sql = """SELECT * FROM tb_ranking WHERE temporada = ?"""
-    lista_equipes = banco.selecionar_dados_condicional(conexao, sql, ano)
-    banco.desconectar(conexao)
-    return lista_equipes
-
-
-def pega_dados_casa(dados):
-    jogos_casa = dados[['Time', 'pontos_casa', 'Jogos_casa', 'V_casa', 'E_casa', 'D_casa', 'gols_pro_casa',
-                        'gols_contra_casa', 'saldo_gols_casa']]
-    return jogos_casa
-
-
-def pega_dados_visitante(dados):
-    jogos_fora = dados[['Time', 'pontos_fora', 'Jogos_fora', 'V_fora', 'E_fora', 'D_fora', 'gols_pro_fora',
-                        'gols_contra_fora', 'saldo_gols_fora']]
-    return jogos_fora
-
-
-def deleta_colunas(dados):
-    dados = dados.drop(['Temporada', 'Ranking', 'Pontos', 'Posicao', 'Jogos_casa', 'V_casa', 'E_casa', 'D_casa',
-                        'gols_pro_casa', 'gols_contra_casa', 'saldo_gols_casa', 'pontos_casa', 'media_pontos_casa',
-                        'Jogos_fora', 'V_fora', 'E_fora', 'D_fora', 'gols_pro_fora', 'gols_contra_fora',
-                        'saldo_gols_fora', 'pontos_fora', 'media_pontos_fora'], axis=1)
-    return dados
+    tabela = tabela[tabela.temporada == ano]
+    tabela = tabela.drop(['temporada'], axis=1)
+    return tabela
 
 
 def pega_numero_jogos(dados):
@@ -148,19 +74,19 @@ def pega_numero_jogos(dados):
 
 def pega_vitorias_casa(dados):
     tabela = dados
-    num_vitoria_casa = tabela['V_casa'].sum()
+    num_vitoria_casa = tabela['v_casa'].sum()
     return num_vitoria_casa
 
 
 def pega_vitorias_fora(dados):
     tabela = dados
-    num_vitoria_fora = tabela['V_fora'].sum()
+    num_vitoria_fora = tabela['v_fora'].sum()
     return num_vitoria_fora
 
 
 def pega_empates(dados):
     tabela = dados
-    num_empates = tabela['E_casa'].sum()
+    num_empates = tabela['e_casa'].sum()
     return num_empates
 
 

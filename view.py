@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 import pickle
 import api
+import api_banco
 import graficos
 from PIL import Image
 
@@ -18,15 +19,37 @@ def mostra_probabilidades(dados, time_a, time_b):
         modelo_carregado = pickle.load(arquivo)
 
     probabilidade = modelo_carregado.predict_proba(prev)
-    #st.write(probabilidade)
     return probabilidade
 
 
-def mostra_jogos(dados):
+def mostrar_tabela(mensagem, acao):
+    st.text(mensagem)
+    st.table(acao)
+
+
+def mostrar_tabela_classificacao(dados, dados2, ano):
+    st.title(f"Campeonato brasileiro série A - {ano}")
+    primeira_col, segunda_col, terceira_col, _ = st.columns([1, 1, 1, 9])
+    tabela = api_banco.redefine_nome_classificacao(dados)
+    casa, fora = api_banco.divide_casa_fora(dados2)
+    classificacao_completa = primeira_col.button("Total")
+    classificacao_casa = segunda_col.button("Casa")
+    classificacao_fora = terceira_col.button("Fora")
+    if classificacao_completa:
+        mostrar_tabela(f"Classificação Completa {ano}", tabela)
+    elif classificacao_casa:
+        mostrar_tabela(f"Classificação Casa {ano}", casa)
+    elif classificacao_fora:
+        mostrar_tabela(f"Classificação Fora {ano}", fora)
+    else:
+        mostrar_tabela(f"Classificação Completa {ano}", tabela)
+
+
+def mostra_jogos(dados, dados2):
     quantidade_de_jogos = api.pega_numero_jogos(dados)
-    vitoria_mandantes = api.pega_vitorias_casa(dados)
-    vitoria_visitantes = api.pega_vitorias_fora(dados)
-    empates = api.pega_empates(dados)
+    vitoria_mandantes = api.pega_vitorias_casa(dados2)
+    vitoria_visitantes = api.pega_vitorias_fora(dados2)
+    empates = api.pega_empates(dados2)
     col1, col2, col3 = st.columns((2.5, 2, 2))
     col1.metric(label="Rodadas disputadas", value=f"{int(quantidade_de_jogos / 10)}")
     col2.metric(label="Jogos realizados", value=f"{int(quantidade_de_jogos)}")
@@ -57,11 +80,11 @@ def mostra_cartoes(dados):
     col3.pyplot(graficos.grafico_cartoes_pizza(cartoes_amarelo, cartoes_vermelho))
 
 
-def mostra_dados_ataques(dados, estatisticas, ano):
+def mostra_dados_ataques(dados, dados2, estatisticas, ano):
     assistencias = api.pega_assistencias(estatisticas, ano)
     gols_marcados = api.pega_gols_feitos(dados)
-    gols_mandantes = api.pega_gols_mandante(dados)
-    gols_visitante = api.pega_gols_visitantes(dados)
+    gols_mandantes = api.pega_gols_mandante(dados2)
+    gols_visitante = api.pega_gols_visitantes(dados2)
     gols_contra = api.pega_gols_contra(estatisticas, ano)
     penaltis_convertidos = api.pega_penaltis(estatisticas, ano, 1)
     penaltis_batidos = api.pega_penaltis(estatisticas, ano, 2)
@@ -168,7 +191,7 @@ def mostrar_ranking(ano):
     coluna1, coluna2 = st.columns([1, 4])
     coluna1.image(logo_cbf, width=100)
     coluna2.markdown(f"<h1 style='text-align: left;'>Ranking da CBF {ano}</h1>", unsafe_allow_html=True)
-    lista_equipes = api.pega_dados_ranking(ano)
+    lista_equipes = api_banco.pega_dados_ranking(ano)
     if not lista_equipes:
         st.warning("Nenhuma temporada cadastrada!")
         existe = False
