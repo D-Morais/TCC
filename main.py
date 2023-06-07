@@ -45,6 +45,15 @@ def main():
         </style>
     """
     st.markdown(hide_st_style, unsafe_allow_html=True)
+    hide_table_row_index = """
+                    <style>
+                    thead tr th:first-child {display:none}
+                    tbody th {display:none}
+                    </style>
+                    """
+
+    # Inject CSS with Markdown
+    st.markdown(hide_table_row_index, unsafe_allow_html=True)
     with st.sidebar:
         selected = option_menu(
             menu_title=None,

@@ -4,6 +4,7 @@ import pickle
 import api
 import api_banco
 import graficos
+import pandas as pd
 from PIL import Image
 
 logo_cbf = Image.open("logo-topo.png")
@@ -23,6 +24,7 @@ def mostra_probabilidades(dados, time_a, time_b):
 
 
 def mostrar_tabela(mensagem, acao):
+
     st.text(mensagem)
     st.table(acao)
 
