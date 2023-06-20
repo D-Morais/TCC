@@ -4,13 +4,12 @@ import pickle
 import api
 import api_banco
 import graficos
-import pandas as pd
 from PIL import Image
 
 logo_cbf = Image.open("logo-topo.png")
 
 
-def mostra_probabilidades(dados, time_a, time_b):
+def mostra_probabilidades(time_a, time_b):
     estatistica_time_a = api.dados_equipe(time_a)
     estatistica_time_b = api.dados_equipe(time_b)
     dados_times = estatistica_time_a + estatistica_time_b
@@ -29,29 +28,27 @@ def mostrar_tabela(mensagem, acao):
     st.table(acao)
 
 
-def mostrar_tabela_classificacao(dados, dados2, ano):
+def mostrar_tabela_classificacao(tabela, tabela2, tabela3, ano):
     st.title(f"Campeonato brasileiro série A - {ano}")
     primeira_col, segunda_col, terceira_col, _ = st.columns([1, 1, 1, 9])
-    tabela = api_banco.redefine_nome_classificacao(dados)
-    casa, fora = api_banco.divide_casa_fora(dados2)
     classificacao_completa = primeira_col.button("Total")
     classificacao_casa = segunda_col.button("Casa")
     classificacao_fora = terceira_col.button("Fora")
     if classificacao_completa:
         mostrar_tabela(f"Classificação Completa {ano}", tabela)
     elif classificacao_casa:
-        mostrar_tabela(f"Classificação Casa {ano}", casa)
+        mostrar_tabela(f"Classificação Casa {ano}", tabela2)
     elif classificacao_fora:
-        mostrar_tabela(f"Classificação Fora {ano}", fora)
+        mostrar_tabela(f"Classificação Fora {ano}", tabela3)
     else:
         mostrar_tabela(f"Classificação Completa {ano}", tabela)
 
 
-def mostra_jogos(dados, dados2):
-    quantidade_de_jogos = api.pega_numero_jogos(dados)
-    vitoria_mandantes = api.pega_vitorias_casa(dados2)
-    vitoria_visitantes = api.pega_vitorias_fora(dados2)
-    empates = api.pega_empates(dados2)
+def mostra_jogos(tabela, tabela2, tabela3):
+    quantidade_de_jogos = api.pega_numero_jogos(tabela)
+    vitoria_mandantes = api.pega_vitorias(tabela2)
+    vitoria_visitantes = api.pega_vitorias(tabela3)
+    empates = api.pega_empates(tabela2)
     col1, col2, col3 = st.columns((2.5, 2, 2))
     col1.metric(label="Rodadas disputadas", value=f"{int(quantidade_de_jogos / 10)}")
     col2.metric(label="Jogos realizados", value=f"{int(quantidade_de_jogos)}")
@@ -82,17 +79,17 @@ def mostra_cartoes(dados):
     col3.pyplot(graficos.grafico_cartoes_pizza(cartoes_amarelo, cartoes_vermelho))
 
 
-def mostra_dados_ataques(dados, dados2, estatisticas, ano):
+def mostra_dados_ataques(tabela, tabela2, tabela3, estatisticas, ano):
     assistencias = api.pega_assistencias(estatisticas, ano)
-    gols_marcados = api.pega_gols_feitos(dados)
-    gols_mandantes = api.pega_gols_mandante(dados2)
-    gols_visitante = api.pega_gols_visitantes(dados2)
+    gols_marcados = api.pega_gols_feitos(tabela)
+    gols_mandantes = api.pega_gols_feitos(tabela2)
+    gols_visitante = api.pega_gols_feitos(tabela3)
     gols_contra = api.pega_gols_contra(estatisticas, ano)
     penaltis_convertidos = api.pega_penaltis(estatisticas, ano, 1)
     penaltis_batidos = api.pega_penaltis(estatisticas, ano, 2)
-    melhores_ataques = api.pega_melhores_ataques(dados)
+    melhores_ataques = api.pega_melhores_ataques(tabela)
     ma = melhores_ataques.values.tolist()
-    piores_ataques = api.pega_piores_ataques(dados)
+    piores_ataques = api.pega_piores_ataques(tabela)
     pa = piores_ataques.values.tolist()
     st.title("Estatísticas de Ataque")
     col1, col2 = st.columns([1, 1])
@@ -204,6 +201,6 @@ def mostrar_ranking(ano):
             col.write(campo_nome)
         for equipe in lista_equipes:
             _, col1, col2, col3 = st.columns((0.5, 0.5, 1, 2))
-            col1.write(equipe[2])
-            col2.write(equipe[1])
-            col3.write(equipe[3])
+            col1.write(equipe[3])
+            col2.write(equipe[2])
+            col3.write(equipe[4])

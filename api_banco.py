@@ -23,9 +23,17 @@ def pega_tabela():
     return tabela
 
 
-def pega_tabela_casa_fora():
+def pega_tabela_casa():
     conexao = banco.conectar()
-    sql = "SELECT * FROM tabela_casa_fora"
+    sql = "SELECT * FROM tb_classificacao_casa"
+    tabela = pd.read_sql_query(sql, conexao)
+    conexao.close()
+    return tabela
+
+
+def pega_tabela_fora():
+    conexao = banco.conectar()
+    sql = "SELECT * FROM tb_classificacao_fora"
     tabela = pd.read_sql_query(sql, conexao)
     conexao.close()
     return tabela
@@ -42,7 +50,7 @@ def pega_tabela_jogos_mais_cartoes():
 
 def pega_tabela_jogos_mais_gols():
     conexao = banco.conectar()
-    sql = "SELECT temporada, mandante, resultado, visitante FROM tb_jogos_mais_gols"
+    sql = "SELECT temporada, mandante, resultado, visitante FROM tb_mais_gols"
     tabela = pd.read_sql_query(sql, conexao)
     conexao.close()
     return tabela
@@ -56,11 +64,14 @@ def pega_tabela_maiores_placares():
     return tabela
 
 
-def divide_temporada(dados, dados2, temporada):
-    tabela = dados[dados.Temporada == temporada]
+def divide_temporada(dados, dados_casa, dados_fora, temporada):
+    tabela = dados[dados.temporada == temporada]
     tabela = deleta_colunas(tabela)
-    tabela2 = dados2[dados2.temporada == temporada]
-    return tabela, tabela2
+    tb_casa = dados_casa[dados_casa.temporada == temporada]
+    tb_casa = deleta_colunas(tb_casa)
+    tb_fora = dados_fora[dados_fora.temporada == temporada]
+    tb_fora = deleta_colunas(tb_fora)
+    return tabela, tb_casa, tb_fora
 
 
 def pega_dados_casa(dados):
@@ -76,34 +87,5 @@ def pega_dados_visitante(dados):
 
 
 def deleta_colunas(dados):
-    dados = dados.drop(['Temporada', 'P'], axis=1)
-    return dados
-
-
-def redefine_nome_coluna_casa(dados):
-    dados = dados.rename(columns={'equipe_casa': 'Time', 'jogos_casa': 'Jogos', 'v_casa': 'Vitórias',
-                                  'e_casa': 'Empates', 'd_casa': 'Derrotas', 'gols_pro_casa': 'GP',
-                                  'gols_contra_casa': 'GC', 'sg_casa': 'SG', 'pts_casa': 'Pontos'}, inplace=False)
-    return dados
-
-
-def redefine_nome_coluna_visitante(dados):
-    dados = dados.rename(columns={'equipe_fora': 'Time', 'jogos_fora': 'Jogos', 'v_fora': 'Vitórias',
-                                  'e_fora': 'Empates', 'd_fora': 'Derrotas', 'gols_pro_fora': 'GP',
-                                  'gols_contra_fora': 'GC', 'sg_fora': 'SG', 'pts_fora': 'Pontos'}, inplace=False)
-    return dados
-
-
-def divide_casa_fora(dados):
-    tabela = dados
-    jogos_casa = pega_dados_casa(tabela)
-    jogos_fora = pega_dados_visitante(tabela)
-    jogos_casa = redefine_nome_coluna_casa(jogos_casa)
-    jogos_fora = redefine_nome_coluna_visitante(jogos_fora)
-    return jogos_casa, jogos_fora
-
-
-def redefine_nome_classificacao(dados):
-    dados = dados.rename(columns={'PTS': 'Pontos', 'J': 'Jogos', 'V': 'Vitórias', 'E': 'Empate', 'D': 'Derrota',
-                                  '%': 'Aproveitamento'}, inplace=False)
+    dados = dados.drop(['temporada', 'index'], axis=1)
     return dados

@@ -61,8 +61,8 @@ def pega_estatisticas(dados, time_a):
 
 def pega_dado_temporada(dados, ano):
     tabela = dados
-    tabela = tabela[tabela.temporada == ano]
-    tabela = tabela.drop(['temporada'], axis=1)
+    tabela = tabela[tabela.Temporada == ano]
+    tabela = tabela.drop(['Temporada'], axis=1)
     return tabela
 
 
@@ -72,21 +72,15 @@ def pega_numero_jogos(dados):
     return tabela * 10
 
 
-def pega_vitorias_casa(dados):
+def pega_vitorias(dados):
     tabela = dados
-    num_vitoria_casa = tabela['v_casa'].sum()
-    return num_vitoria_casa
-
-
-def pega_vitorias_fora(dados):
-    tabela = dados
-    num_vitoria_fora = tabela['v_fora'].sum()
-    return num_vitoria_fora
+    num_vitoria = tabela['V'].sum()
+    return num_vitoria
 
 
 def pega_empates(dados):
     tabela = dados
-    num_empates = tabela['e_casa'].sum()
+    num_empates = tabela['E'].sum()
     return num_empates
 
 
@@ -128,18 +122,6 @@ def pega_gols_feitos(dados):
     return tabela['GP'].sum()
 
 
-def pega_gols_mandante(dados):
-    tabela = dados
-    gols_mandante = tabela['gols_pro_casa'].sum()
-    return gols_mandante
-
-
-def pega_gols_visitantes(dados):
-    tabela = dados
-    gols_visitante = tabela['gols_pro_fora'].sum()
-    return gols_visitante
-
-
 def pega_gols_contra(dados, ano):
     tabela = dados
     tabela = tabela[tabela.Temporada == ano]
@@ -176,12 +158,6 @@ def pega_impedimentos(dados, ano):
     return tabela['Impedimentos'].sum()
 
 
-def pega_media_posse(dados, ano):
-    tabela = dados
-    tabela = tabela[tabela.Temporada == ano]
-    return tabela['Posse'].mean()
-
-
 def pega_maiores_posses(dados, ano):
     tabela = dados
     tabela = tabela[tabela.Temporada == ano]
@@ -208,34 +184,7 @@ def retorna_times(dados):
     return listaselecoes, listaselecoes2
 
 
-def pega_maiores_publicos(dados, ano):
-    tabela = dados
-    tabela = tabela[tabela.temporada == ano]
-    publico = tabela[['publico']]
-    publico = publico[publico.publico > 0]
-    maiores_publicos = publico.sort_values("publico", ascending=False).head(5)
-
-    return maiores_publicos
-
-
-def pega_menores_publicos(dados, ano):
-    tabela = dados
-    tabela = tabela[tabela.temporada == ano]
-    publico = tabela[['publico']]
-    publico = publico[publico.publico > 0]
-    piores_publicos = publico.sort_values("publico", ascending=False).tail(5)
-
-    return piores_publicos
-
-
 def num_jogadores_utilizados(dados, ano):
     tabela = dados
     tabela = tabela[tabela.Temporada == ano]
     return tabela['Num_jogadores'].sum()
-
-
-def pega_arbitros(dados):
-    tabela = dados
-    listaarbitros = tabela['arbitro'].unique().tolist()
-    listaarbitros.sort()
-    return listaarbitros
