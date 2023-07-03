@@ -43,11 +43,24 @@ def dados_equipe(equipe):
 
 def pega_historico_jogos(dados, time_a, time_b):
     tabela = dados
-    tabela2 = tabela[(tabela.casa == time_a) & (tabela.visitante == time_b)]
-    tabela2 = tabela2[['temporada', 'casa', 'placar', 'visitante']]
-    tabela3 = tabela[(tabela.casa == time_b) & (tabela.visitante == time_a)]
-    tabela3 = tabela3[['temporada', 'casa', 'placar', 'visitante']]
-    return tabela2.head(), tabela3.head()
+    historico_de_jogos = tabela[((tabela.casa == time_a) & (tabela.visitante == time_b)) | ((tabela.casa == time_b) & (
+            tabela.visitante == time_a))]
+    historico_de_jogos = historico_de_jogos[['temporada', 'casa', 'placar', 'visitante']]
+    return historico_de_jogos
+
+
+def dados_historico(historico, time):
+    gols_time = historico[(historico.Time == time)]
+    gols_time = gols_time[['GP']]
+
+    return gols_time
+
+
+def dados_historico_fora(historico, time):
+    gols_sofridos = historico[(historico.Time == time)]
+    gols_sofridos = gols_sofridos[['GC']]
+
+    return gols_sofridos
 
 
 def pega_estatisticas(dados, time_a):
@@ -70,6 +83,13 @@ def pega_numero_jogos(dados):
     tabela = dados
     tabela = tabela['J'].mean()
     return tabela * 10
+
+
+def pega_numero_jogos_cf(dados, time):
+    tabela = dados
+    tabela = tabela[tabela.Time == time]
+    num_jogos = tabela['J'].mean()
+    return int(num_jogos)
 
 
 def pega_vitorias(dados):
@@ -141,39 +161,6 @@ def pega_penaltis(dados, ano, op):
         return tabela['P_convertidos'].sum()
     elif op == 2:
         return tabela['P_batidos'].sum()
-
-
-def pega_faltas(dados, ano, op):
-    tabela = dados
-    tabela = tabela[tabela.Temporada == ano]
-    if op == 1:
-        return tabela['Faltas_cometidas'].sum()
-    elif op == 2:
-        return tabela['Faltas_sofridas'].sum()
-
-
-def pega_impedimentos(dados, ano):
-    tabela = dados
-    tabela = tabela[tabela.Temporada == ano]
-    return tabela['Impedimentos'].sum()
-
-
-def pega_maiores_posses(dados, ano):
-    tabela = dados
-    tabela = tabela[tabela.Temporada == ano]
-    times = tabela[['Equipe', 'Posse']]
-    times = times.sort_values("Posse", ascending=False).head(5)
-
-    return times
-
-
-def pega_menores_posses(dados, ano):
-    tabela = dados
-    tabela = tabela[tabela.Temporada == ano]
-    times = tabela[['Equipe', 'Posse']]
-    times = times.sort_values("Posse", ascending=False).tail()
-
-    return times
 
 
 def retorna_times(dados):

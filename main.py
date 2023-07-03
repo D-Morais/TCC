@@ -4,7 +4,7 @@ from streamlit_option_menu import option_menu
 import api_banco
 import api
 import view
-
+import graficos
 
 ESTATISTICAS = api_banco.pega_dados(r"dataset/estatisticas.xlsx")
 RESULTADOS = api_banco.pega_dados(r"dataset/resultados_br.xlsx")
@@ -87,7 +87,7 @@ def main():
         time1 = j1.selectbox('Escolha o primeiro Time', lista_times)
         lista_times2.remove(time1)
         time2 = j2.selectbox('Escolha o segundo Time', lista_times2, index=1)
-        proba = view.mostra_probabilidades(time1, time2)
+        proba = view.mostrar_probabilidades(time1, time2)
         j1.metric(label="", value="")
         j2.metric(label="", value="")
         st.subheader("Probabilidades")
@@ -96,9 +96,61 @@ def main():
             col1.metric(label="Vitória do Mandante", value="{: .2f}%".format((jogo[2] * 100)))
             col2.metric(label="Empate", value="{: .2f}%".format((jogo[1] * 100)))
             col3.metric(label="Vitória do Visitante", value="{: .2f}%".format((jogo[0] * 100)))
-        historico, historico2 = api.pega_historico_jogos(RESULTADOS, time1, time2)
+        st.markdown('---')
         st.subheader("Últimos Confrontos")
+        historico = api.pega_historico_jogos(RESULTADOS, time1, time2)
         st.table(historico)
+        st.markdown('---')
+        st.subheader("Dados no Campeonato de 2023")
+        col1, col2, col3 = st.columns([2, 1, 2])
+        gols_time_1 = api.dados_historico(CASA_23, time1)
+        gols_time_1_total = api.dados_historico(TEMPORADA_2023, time1)
+        gols_time_1 = gols_time_1.values.tolist()
+        gols_time_1_total = gols_time_1_total.values.tolist()
+        num_jogos_time_1 = api.pega_numero_jogos_cf(CASA_23, time1)
+        for gols in gols_time_1:
+            gols_time_1 = gols[0]
+        for gols in gols_time_1_total:
+            gols_time_1_total = gols[0]
+
+        gols_time_2 = api.dados_historico(FORA_23, time2)
+        gols_time_2_total = api.dados_historico(TEMPORADA_2023, time2)
+        gols_time_2 = gols_time_2.values.tolist()
+        gols_time_2_total = gols_time_2_total.values.tolist()
+        num_jogos_time_2 = api.pega_numero_jogos_cf(FORA_23, time2)
+        for gols in gols_time_2:
+            gols_time_2 = gols[0]
+        for gols in gols_time_2_total:
+            gols_time_2_total = gols[0]
+
+        gols_time_1_sofridos = api.dados_historico_fora(CASA_23, time1)
+        gols_time_1_sofridos = gols_time_1_sofridos.values.tolist()
+        for gols in gols_time_1_sofridos:
+            gols_time_1_sofridos = gols[0]
+        gols_time_2_sofridos = api.dados_historico_fora(FORA_23, time1)
+        gols_time_2_sofridos = gols_time_2_sofridos.values.tolist()
+        for gols in gols_time_2_sofridos:
+            gols_time_2_sofridos = gols[0]
+
+        col1.subheader(time1)
+        col2.subheader("-")
+        col3.subheader(time2)
+        col1.metric(label="Gols marcados como mandante", value=f"{gols_time_1}")
+        col3.metric(label="Gols marcados como visitante", value=f"{gols_time_2}")
+        col1.metric(label="Média de gols como mandante", value="{: .2f}".format(gols_time_1 / num_jogos_time_1))
+        col3.metric(label="Média de gols como visitante", value="{: .2f}".format(gols_time_2 / num_jogos_time_2))
+        col1.metric(label="Gols sofridos como mandante", value=f"{gols_time_1_sofridos}")
+        col3.metric(label="Gols sofridos como visitante", value=f"{gols_time_2_sofridos}")
+        col1.metric(label="Média de gols sofridos como mandante", value="{: .2f}".format(gols_time_1_sofridos /
+                                                                                         num_jogos_time_1))
+        col3.metric(label="Média de gols sofridos marcados como visitante", value="{: .2f}".format(gols_time_2_sofridos
+                                                                                                   / num_jogos_time_2))
+        col1.metric(label="", value="")
+        col3.metric(label="", value="")
+        col1.pyplot(graficos.grafico_divisao_gols_casa(gols_time_1, gols_time_1_total))
+        col2.write("")
+        col3.pyplot(graficos.grafico_divisao_gols_fora(gols_time_2, gols_time_2_total))
+
     if selected == "Temporadas":
         st.sidebar.subheader("Campeonato Brasileiro")
         lista_temporada = ["Brasileiro 2022", "Brasileiro 2021", "Brasileiro 2020",

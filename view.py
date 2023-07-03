@@ -9,7 +9,7 @@ from PIL import Image
 logo_cbf = Image.open("logo-topo.png")
 
 
-def mostra_probabilidades(time_a, time_b):
+def mostrar_probabilidades(time_a, time_b):
     estatistica_time_a = api.dados_equipe(time_a)
     estatistica_time_b = api.dados_equipe(time_b)
     dados_times = estatistica_time_a + estatistica_time_b
@@ -143,48 +143,6 @@ def mostra_dados_defesas(dados):
         col2.text(f"{info[0]} {info[1]}")
 
 
-def mostra_dados_publico(dados, ano):
-    maiores_publicos = api.pega_maiores_publicos(dados, ano)
-    maiores_p = maiores_publicos.values.tolist()
-    menores_publicos = api.pega_menores_publicos(dados, ano)
-    menores_p = menores_publicos.values.tolist()
-    st.title("Estatísticas de Público")
-    col1, col2 = st.columns([1, 1])
-    col1.subheader("Maiores Públicos")
-    if maiores_publicos.empty:
-        col1.text("Não a relato de público campeonato!")
-    else:
-        for info in maiores_p:
-            col1.text(f"{info[0]}")
-        col2.subheader("Menores Públicos")
-        for info in menores_p:
-            col2.text(f"{info[0]}")
-
-
-def mostra_estatisticas_diversas(dados, ano):
-    st.title("Estatísticas Diversas do Campeonato")
-    col1, col2 = st.columns([1, 1])
-    col1.subheader("Maiores Posses de Bola")
-    maiores_posse = api.pega_maiores_posses(dados, ano)
-    maiores_p = maiores_posse.values.tolist()
-    for info in maiores_p:
-        col1.text(f"{info[0]} {info[1]}")
-    col2.subheader("Menores Posses de Bola")
-    menores_posses = api.pega_menores_posses(dados, ano)
-    menores_p = menores_posses.values.tolist()
-    for info in menores_p:
-        col2.text(f"{info[0]} {info[1]}")
-    media_posse = api.pega_media_posse(dados, ano)
-    impedimentos = api.pega_impedimentos(dados, ano)
-    jogadores_utilizados = api.num_jogadores_utilizados(dados, ano)
-    col1.metric(label="", value=f"")
-    col2.metric(label="", value=f"")
-    col1.metric(label="Média de posse de bola", value=f"{media_posse}")
-    col2.metric(label="Quantidade de impedimentos", value=f"{impedimentos}")
-    col2.metric(label="Média de impedimentos por jogo", value="{: .2f}".format(impedimentos / 380))
-    col1.metric(label="Quantidade de jogadores utilizados", value=f"{jogadores_utilizados}")
-
-
 def mostrar_ranking(ano):
     existe = True
     coluna1, coluna2 = st.columns([1, 4])
@@ -204,3 +162,4 @@ def mostrar_ranking(ano):
             col1.write(equipe[3])
             col2.write(equipe[2])
             col3.write(equipe[4])
+

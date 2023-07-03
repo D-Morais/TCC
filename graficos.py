@@ -1,6 +1,4 @@
 import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
 
 
 def grafico_resultados_pizza(vitorias_mandantes, empates, vitorias_visitante):
@@ -104,4 +102,30 @@ def grafico_penaltis(penaltis_batidos, penaltis_convertidos):
     explode = (0.1, 0)
     ax.pie(porcent, labels=penaltis_possiveis, autopct='%1.1f%%', explode=explode, startangle=60, colors=cores)
     ax.set_title("Porcentagem dos resultados", fontsize=10)
+    plt.show()
+
+
+def grafico_divisao_gols_casa(gols_casa, gols_totais):
+    gols_fora = gols_totais - gols_casa
+    gols_divisao = [gols_totais, gols_casa, gols_fora]
+    gols_possiveis = ["Total", "Como Mandante", "Como Visitante"]
+    cores = ["blue", "green", "red"]
+    fig, ax = plt.subplots()
+    bar_container = ax.bar(gols_possiveis, gols_divisao, color=cores)
+    ax.set(ylabel="Número de gols marcados", title='Gols marcados no campeonato de 2023', ylim=(0, gols_totais +
+                                                                                                gols_casa))
+    ax.bar_label(bar_container, fmt='{:,.0f}')
+    plt.show()
+
+
+def grafico_divisao_gols_fora(gols_fora, gols_totais):
+    gols_casa = gols_totais - gols_fora
+    gols_divisao = [gols_totais, gols_casa, gols_fora]
+    gols_possiveis = ["Total", "Como Mandante", "Como Visitante"]
+    cores = ["blue", "green", "red"]
+    fig, ax = plt.subplots()
+    bar_container = ax.bar(gols_possiveis, gols_divisao, color=cores)
+    ax.set(ylabel="Número de gols marcados", title='Gols marcados no campeonato de 2023', ylim=(0, gols_totais +
+                                                                                                gols_casa))
+    ax.bar_label(bar_container, fmt='{:,.0f}')
     plt.show()
